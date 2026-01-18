@@ -60,6 +60,39 @@
             background: #dceeff;
             border-color: #004494;
         }
+        
+        /* New Report UI Styles */
+        .report-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .report-card { background: white; border: 1px solid #ddd; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .report-card h3 { font-size: 12px; text-transform: uppercase; color: #666; margin: 0 0 10px 0; letter-spacing: 0.5px; }
+        .report-card .number { font-size: 36px; font-weight: bold; color: #333; display: block; margin-bottom: 5px; }
+        .report-card .sub { font-size: 12px; color: #888; }
+        .bg-red { border-top: 4px solid #d32f2f; }
+        .bg-blue { border-top: 4px solid #0277bd; }
+        .bg-gray { border-top: 4px solid #757575; }
+
+        .section-title { font-size: 24px; border-bottom: 2px solid #eee; padding-bottom: 10px; margin: 40px 0 20px; }
+        
+        .subsection-title { font-size: 16px; margin: 25px 0 15px; padding: 8px 12px; border-radius: 4px; font-weight: bold; }
+        .subsection-title.must-fix { background: #ffebee; color: #c62828; border-left: 4px solid #d32f2f; }
+        .subsection-title.good-to-fix { background: #e1f5fe; color: #01579b; border-left: 4px solid #0277bd; }
+
+        .issue-group { border: 1px solid #e0e0e0; margin-bottom: 10px; border-radius: 6px; background: white; }
+        .issue-header { background: #f9f9f9; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; list-style: none; }
+        .issue-header:hover { background: #f0f0f0; }
+        .issue-header::-webkit-details-marker { display: none; }
+        .issue-title { font-weight: bold; font-size: 16px; color: #333; }
+        .issue-meta { font-size: 13px; color: #666; text-align: right; }
+        .issue-body { padding: 15px; border-top: 1px solid #e0e0e0; background: #fff; }
+        
+        .top-page-row { display: flex; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid #eee; background: white; }
+        .top-page-row:last-child { border-bottom: none; }
+        .top-page-url { font-family: ui-monospace, monospace; color: #0056b3; text-decoration: none; }
+        .top-page-url:hover { text-decoration: underline; }
+        .count-badge { background: #eee; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; color: #555; }
+        .count-badge.high { background: #ffebee; color: #c62828; }
+
+        .scan-footer { margin-top: 50px; border-top: 1px solid #eee; padding-top: 20px; color: #666; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -412,35 +445,181 @@
     function renderResults(resultsByUrl) {
         const entries = Object.entries(resultsByUrl);
         if (!entries.length) {
-            els.results.innerHTML = '<p>No results yet.</p>';
+            els.results.innerHTML = '<p style="text-align:center;color:#666;">No results yet.</p>';
             return;
         }
 
-        const rows = entries.map(([url, res]) => {
+        // 1. Calculate Stats
+        const totalPages = entries.length;
+        let pagesWithIssues = 0;
+        let mustFixCount = 0;
+        let goodToFixCount = 0;
+        
+        // Group issues
+        const allIssues = new Map(); // id -> { rule, nodes: [], pages: Set() }
+
+        for (const [url, res] of entries) {
             const violations = res.violations || [];
-            const nodeCount = violations.reduce((acc, v) => acc + (v.nodes?.length || 0), 0);
-            return { url, ruleCount: violations.length, nodeCount, res };
-        }).sort((a, b) => b.nodeCount - a.nodeCount);
+            if (violations.length > 0) pagesWithIssues++;
 
-        let html = `<table>
-            <thead><tr>
-                <th>URL</th>
-                <th>Violation rules</th>
-                <th>Violation instances</th>
-                <th>Details</th>
-            </tr></thead><tbody>`;
-
-        for (const r of rows) {
-            const cls = r.res.error ? "error" : (r.nodeCount === 0 ? "success" : "error");
-            html += `<tr>
-                <td class="mono"><a href="${r.url}" target="_blank" rel="noopener">${r.url}</a></td>
-                <td class="${cls}">${r.ruleCount}</td>
-                <td class="${cls}">${r.nodeCount}</td>
-                <td>${renderUrlDetails(r.res)}</td>
-            </tr>`;
+            for (const v of violations) {
+                const impact = v.impact || 'minor';
+                if (['critical', 'serious'].includes(impact)) mustFixCount += (v.nodes || []).length;
+                else if (['moderate', 'minor'].includes(impact)) goodToFixCount += (v.nodes || []).length;
+                
+                if (!allIssues.has(v.id)) {
+                    allIssues.set(v.id, { ...v, nodes: [], pages: new Set() });
+                }
+                const record = allIssues.get(v.id);
+                record.pages.add(url);
+                for (const n of (v.nodes || [])) {
+                    record.nodes.push({ ...n, pageUrl: url });
+                }
+            }
         }
-        html += '</tbody></table>';
+        
+        const groupedIssues = Array.from(allIssues.values());
+        
+        // 2. Generate HTML
+        let html = `
+            <div style="margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px;">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                   <div>
+                       <h2 style="margin-top:0;">Accessibility Scan Report</h2>
+                       <p style="color:#666; margin:5px 0;">
+                           Date: ${new Date().toLocaleString()} · <span style="font-weight:bold;">${totalPages} Pages Scanned</span>
+                       </p>
+                   </div>
+                   <div>
+                       <a href="#" onclick="exportCsv(); return false;" class="pill scanning" style="text-decoration:none; padding:8px 16px;">Download CSV</a>
+                   </div>
+                </div>
+            </div>
+
+            <div class="report-grid">
+                <div class="report-card">
+                    <h3>Pages Scanned</h3>
+                    <span class="number">${totalPages}</span>
+                    <span class="sub">Targets processed</span>
+                </div>
+                <div class="report-card ${pagesWithIssues > 0 ? 'bg-red' : 'bg-gray'}">
+                    <h3>Pages with Issues</h3>
+                    <span class="number">${pagesWithIssues}</span>
+                    <span class="sub">${totalPages > 0 ? Math.round((pagesWithIssues/totalPages)*100) : 0}% of pages</span>
+                </div>
+                <div class="report-card bg-red">
+                    <h3>Must Fix</h3>
+                    <span class="number">${mustFixCount}</span>
+                    <span class="sub">Critical / Serious impacts</span>
+                </div>
+                <div class="report-card bg-blue">
+                    <h3>Good to Fix</h3>
+                    <span class="number">${goodToFixCount}</span>
+                    <span class="sub">Moderate / Minor impacts</span>
+                </div>
+            </div>
+
+            <h2 class="section-title">Top pages to review</h2>
+            <div style="border:1px solid #ddd; border-radius:8px; overflow:hidden; margin-bottom: 30px;">
+                ${renderTopPages(entries)}
+            </div>
+
+            <h2 class="section-title">Issues grouped by impact</h2>
+            ${renderIssuesByImpact(groupedIssues)}
+            
+            <div class="scan-footer">
+                <h3>About this scan</h3>
+                <p>
+                    Date: ${new Date().toLocaleString()}<br>
+                    User Agent: ${navigator.userAgent}<br>
+                    Tool: Standalone A11y Scanner
+                </p>
+            </div>
+        `;
+
         els.results.innerHTML = html;
+    }
+
+    function renderTopPages(entries) {
+        // Sort by total violation count (nodes)
+        const sorted = entries.map(([url, res]) => {
+            const count = (res.violations||[]).reduce((acc, v) => acc + (v.nodes||[]).length, 0);
+            return { url, count };
+        }).sort((a,b) => b.count - a.count).slice(0, 5); // Start with top 5
+
+        if (sorted.length === 0) return '<div style="padding:15px;">No pages scanned yet.</div>';
+
+        return sorted.map(p => `
+            <div class="top-page-row">
+                <a href="${p.url}" target="_blank" class="top-page-url">${p.url}</a>
+                <span class="count-badge ${p.count > 0 ? 'high' : ''}">${p.count} issues</span>
+            </div>
+        `).join('');
+    }
+
+    function renderIssuesByImpact(issues) {
+        const mustFix = issues.filter(i => ['critical', 'serious'].includes(i.impact));
+        const goodToFix = issues.filter(i => ['moderate', 'minor'].includes(i.impact));
+        
+        let html = '';
+        
+        if (mustFix.length) {
+            html += `<h3 class="subsection-title must-fix">Must Fix (${mustFix.reduce((a,i)=>a+i.nodes.length,0)} occurrences)</h3>`;
+            html += mustFix.map(renderIssueGroup).join('');
+        }
+        
+        if (goodToFix.length) {
+            html += `<h3 class="subsection-title good-to-fix">Good to Fix (${goodToFix.reduce((a,i)=>a+i.nodes.length,0)} occurrences)</h3>`;
+            html += goodToFix.map(renderIssueGroup).join('');
+        }
+
+        if (!mustFix.length && !goodToFix.length) {
+             html += '<p>No issues found.</p>';
+        }
+        
+        return html;
+    }
+
+    function renderIssueGroup(issue) {
+        // Group nodes by URL for display
+        const nodesByUrl = {};
+        for (const n of issue.nodes) {
+            if (!nodesByUrl[n.pageUrl]) nodesByUrl[n.pageUrl] = [];
+            nodesByUrl[n.pageUrl].push(n);
+        }
+
+        return `
+            <details class="issue-group">
+                <summary class="issue-header">
+                    <div>
+                        <span class="issue-title">${esc(issue.id)}</span>
+                        <span style="font-weight:normal; margin-left: 10px; color:#555;">${esc(issue.help)}</span>
+                    </div>
+                    <div class="issue-meta">
+                        ${issue.nodes.length} instances · ${issue.pages.size} pages
+                        <span class="pill ${['critical','serious'].includes(issue.impact) ? 'error' : 'scanning'}" style="margin-left:8px;">${issue.impact}</span>
+                    </div>
+                </summary>
+                <div class="issue-body">
+                    <p style="margin-top:0;">
+                        ${esc(issue.description)} 
+                        ${issue.helpUrl ? `<a href="${issue.helpUrl}" target="_blank" rel="noopener">Learn more</a>` : ''}
+                    </p>
+                    ${Object.entries(nodesByUrl).map(([url, nodes]) => `
+                        <div style="margin-bottom: 15px;">
+                            <strong><a href="${url}" target="_blank">${url}</a></strong> (${nodes.length} nodes)
+                            ${nodes.map(n => `
+                                <div style="margin-left: 15px; border-left: 2px solid #ddd; padding-left: 10px; margin-top:5px; background:#fafafa; padding:8px;">
+                                    <div class="mono" style="font-size:12px; color:#555; margin-bottom:4px;">Target: ${esc(n.target && n.target.join(' '))}</div>
+                                    ${n.html ? `<pre style="margin:0; font-size:11px; white-space:pre-wrap;">${esc(n.html)}</pre>` : ''}
+                                    <div style="color:#d32f2f; font-size:12px; margin-top:4px;">${esc(n.failureSummary)}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `).join('')}
+                </div>
+            </details>
+        `;
     }
 
     function makeIframe(url) {
