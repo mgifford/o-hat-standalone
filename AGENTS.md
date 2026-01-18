@@ -46,3 +46,11 @@ These fixture pages are used by:
 - Manual testing with `standalone/a11y-scan.html?token=A11Y-SECRET`
 
 Keep them broken. That's the point.
+
+## Verifying Scanner Changes
+
+If you modify `a11y-scan.html` (e.g. adding features or fixing *its* accessibility), verify it using the **Local Directory (Drag/Drop)** feature:
+1. Open `a11y-scan.html` in a browser.
+2. Select "Local Directory" from the dropdown.
+3. Drag the root folder of this workspace (containing `page1.html` etc.) onto the drop zone.
+4. Run the scan and ensure it detects the expected violations in the fixture pages.

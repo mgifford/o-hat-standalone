@@ -45,6 +45,21 @@
         #gate-screen { position: fixed; top:0; left:0; width:100%; height:100%; background:white; display:flex; justify-content:center; align-items:center; z-index: 1000; }
         .hidden { display: none !important; }
         iframe { width: 1px; height: 1px; position: absolute; left: -99999px; top: 0; border: 0; }
+        #dropZone {
+            border: 2px dashed #0056b3;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            color: #0056b3;
+            background: #f0f7ff;
+            margin-bottom: 20px;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+        #dropZone.dragover {
+            background: #dceeff;
+            border-color: #004494;
+        }
     </style>
 </head>
 <body>
@@ -73,6 +88,7 @@
             <select id="sourceType">
                 <option value="sitemap">Sitemap (sitemap.xml)</option>
                 <option value="custom">Custom List (below)</option>
+                <option value="files">Local Directory (Drag/Drop)</option>
             </select>
         </div>
         
@@ -84,6 +100,12 @@
         <div class="form-group hidden" id="customListGroup">
              <label for="customUrlList">URLs (one per line)</label>
              <textarea id="customUrlList"></textarea>
+        </div>
+        
+        <div id="dropZone" class="hidden">
+            <h3>Drag & Drop Folder Here</h3>
+            <p>Drag a folder containing HTML files to scan them directly.</p>
+            <div id="dropStatus">No files selected</div>
         </div>
 
         <div class="form-row">
@@ -118,7 +140,7 @@
         <div class="form-row">
             <div class="form-group">
                 <label for="axePath">Axe Script Path</label>
-                <input type="text" id="axePath" value="../assets/axe.min.js">
+                <input type="text" id="axePath" value="assets/axe.min.js">
             </div>
 
             <div class="form-group">
@@ -176,6 +198,8 @@
         customList: document.getElementById('customUrlList'),
         sitemapGroup: document.getElementById('sitemapInputGroup'),
         customGroup: document.getElementById('customListGroup'),
+        dropZone: document.getElementById('dropZone'),
+        dropStatus: document.getElementById('dropStatus'),
         pathPrefix: document.getElementById('pathPrefix'),
         excludeStr: document.getElementById('excludeStr'),
         maxPages: document.getElementById('maxPages'),
@@ -202,10 +226,81 @@
     let urlList = [];
     let stopRequested = false;
     let runData = null;
+    let fileRegistry = new Map(); // path -> File object
+    let axeScriptContent = null; // cache for axe script content
 
     function setPill(text, cls) {
         els.statusPill.textContent = text;
         els.statusPill.className = `pill ${cls || ""}`.trim();
+    }
+    
+    // Drag & Drop Handlers
+    els.dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        els.dropZone.classList.add('dragover');
+    });
+
+    els.dropZone.addEventListener('dragleave', () => {
+        els.dropZone.classList.remove('dragover');
+    });
+
+    els.dropZone.addEventListener('drop', async (e) => {
+        e.preventDefault();
+        els.dropZone.classList.remove('dragover');
+        
+        fileRegistry.clear();
+        els.dropStatus.textContent = "Scanning directory...";
+        const items = e.dataTransfer.items;
+        
+        if (items) {
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i].webkitGetAsEntry();
+                if (item) {
+                    await traverseFileTree(item);
+                }
+            }
+        }
+        
+        const count = fileRegistry.size;
+        els.dropStatus.textContent = `Found ${count} HTML file${count !== 1 ? 's' : ''}. Ready to scan.`;
+        if (count > 0) {
+            loadUrls();
+        }
+    });
+
+    function traverseFileTree(item, path = "") {
+        return new Promise((resolve) => {
+            if (item.isFile) {
+                if (item.name.endsWith('.html')) {
+                    item.file((file) => {
+                        // Create a simulated path
+                        const fullPath = path + item.name;
+                        // Use a fake protocol so URL() parsing works if needed, or just plain string
+                        // We'll use a unique key
+                        const key = "file://" + fullPath;
+                        fileRegistry.set(key, file);
+                        resolve();
+                    });
+                } else {
+                    resolve();
+                }
+            } else if (item.isDirectory) {
+                const dirReader = item.createReader();
+                const readEntries = () => {
+                    dirReader.readEntries(async (entries) => {
+                        if (entries.length === 0) {
+                            resolve();
+                        } else {
+                            const params = entries.map(e => traverseFileTree(e, path + item.name + "/"));
+                            await Promise.all(params);
+                            // Continue reading until empty (standard behavior for readEntries)
+                            readEntries();
+                        }
+                    });
+                };
+                readEntries();
+            }
+        });
     }
 
     function log(line) {
@@ -372,16 +467,22 @@
         });
     }
 
-    function injectScript(iframe, src) {
+    function injectScript(iframe, srcOrContent, isContent = false) {
         return new Promise((resolve, reject) => {
             const doc = iframe.contentDocument;
             if (!doc) return reject(new Error('No iframe.contentDocument available (blocked or not loaded).'));
             if (iframe.contentWindow && iframe.contentWindow.axe) return resolve();
             const s = doc.createElement('script');
-            s.src = src;
-            s.onload = () => resolve();
-            s.onerror = () => reject(new Error('Failed to load axe script in iframe.'));
+            if (isContent) {
+                s.textContent = srcOrContent;
+                // Inline scripts run immediately when appended
+            } else {
+                s.src = srcOrContent;
+                s.onload = () => resolve();
+                s.onerror = () => reject(new Error('Failed to load axe script in iframe.'));
+            }
             doc.head.appendChild(s);
+            if (isContent) resolve();
         });
     }
 
@@ -404,14 +505,20 @@
         let urls = [];
         if (els.sourceType.value === 'sitemap') {
             urls = await fetchSitemapUrls(els.sitemapPath.value.trim() || 'sitemap.xml');
-        } else {
+        } else if (els.sourceType.value === 'custom') {
             urls = parseCustomList();
+        } else if (els.sourceType.value === 'files') {
+            urls = Array.from(fileRegistry.keys());
+            if (urls.length === 0) {
+                 log("No files loaded. Please drag and drop a folder first.");
+            }
         }
 
         const filtered = applyFilters(urls);
         urlList = filtered;
         els.loadedCount.textContent = String(urlList.length);
         log(`URLs discovered: ${urls.length}, after filters: ${urlList.length}`);
+
 
         if (!urlList.length) {
             setStatus('No URLs to scan.', 'error');
@@ -455,6 +562,21 @@
 
         window.__lastRun = runData;
 
+        // Pre-fetch axe script if in file mode
+        if (els.sourceType.value === 'files' && !axeScriptContent) {
+             setStatus('Loading axe-core...', 'loading');
+             try {
+                 const axeUrl = new URL(runData.config.axePath, window.location.href).toString();
+                 const res = await fetch(axeUrl);
+                 if (!res.ok) throw new Error("Failed to load axe script from " + axeUrl);
+                 axeScriptContent = await res.text();
+             } catch (e) {
+                 setStatus('Error loading axe', 'error');
+                 log('Fatal: ' + e.message);
+                 return;
+             }
+        }
+
         els.scannedCount.textContent = '0';
         els.pagesWithViolations.textContent = '0';
         els.totalViolations.textContent = '0';
@@ -471,7 +593,9 @@
         for (const url of urlList) {
             if (stopRequested) break;
 
-            if (!sameOrigin(url)) {
+            const isLocal = fileRegistry.has(url);
+
+            if (!isLocal && !sameOrigin(url)) {
                 runData.resultsByUrl[url] = { error: 'Skipping cross-origin URL', violations: [] };
                 scanned++;
                 els.scannedCount.textContent = String(scanned);
@@ -485,11 +609,27 @@
 
             log(`Scanning: ${url}`);
             const iframe = makeIframe(url);
-            iframe.src = url;
+            
             try {
+                if (isLocal) {
+                    const file = fileRegistry.get(url);
+                    const html = await file.text();
+                    iframe.removeAttribute('src');
+                    iframe.srcdoc = html;
+                } else {
+                    iframe.removeAttribute('srcdoc');
+                    iframe.src = url;
+                }
+
                 await waitForLoad(iframe, runData.config.timeoutMs);
                 await sleep(250); // small settle time for SPAs
-                await injectScript(iframe, new URL(runData.config.axePath, window.location.origin).toString());
+                
+                if (isLocal) {
+                    await injectScript(iframe, axeScriptContent, true);
+                } else {
+                    await injectScript(iframe, new URL(runData.config.axePath, window.location.origin).toString());
+                }
+
                 const res = await runAxeInFrame(iframe, axeOptions);
                 runData.resultsByUrl[url] = res;
                 scanned++;
@@ -507,6 +647,7 @@
                 log(`ERROR: ${url} -> ${e}`);
             } finally {
                 iframe.src = 'about:blank';
+                iframe.removeAttribute('srcdoc');
             }
 
             if (stopRequested) break;
@@ -515,6 +656,7 @@
 
         runData.finishedAt = new Date().toISOString();
         window.__lastRun = runData;
+
 
         if (stopRequested) {
             setStatus('Stopped by user.', 'error');
@@ -611,11 +753,15 @@
     }
 
     els.sourceType.addEventListener('change', () => {
+        els.customGroup.classList.add('hidden');
+        els.sitemapGroup.classList.add('hidden');
+        els.dropZone.classList.add('hidden');
+
         if (els.sourceType.value === 'custom') {
             els.customGroup.classList.remove('hidden');
-            els.sitemapGroup.classList.add('hidden');
+        } else if (els.sourceType.value === 'files') {
+            els.dropZone.classList.remove('hidden');
         } else {
-            els.customGroup.classList.add('hidden');
             els.sitemapGroup.classList.remove('hidden');
         }
     });
