@@ -627,7 +627,7 @@
                 if (isLocal) {
                     await injectScript(iframe, axeScriptContent, true);
                 } else {
-                    await injectScript(iframe, new URL(runData.config.axePath, window.location.origin).toString());
+                    await injectScript(iframe, new URL(runData.config.axePath, window.location.href).toString());
                 }
 
                 const res = await runAxeInFrame(iframe, axeOptions);
