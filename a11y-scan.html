@@ -381,7 +381,7 @@
     }
 
     async function fetchSitemapUrls(path) {
-        const res = await fetch(path, { credentials: "include" });
+        const res = await fetch(path, { credentials: "include", cache: "no-store" });
         if (!res.ok) throw new Error(`Failed to fetch sitemap: ${res.status} ${res.statusText}`);
         const xmlText = await res.text();
         const parser = new DOMParser();
