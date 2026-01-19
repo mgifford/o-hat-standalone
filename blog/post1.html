@@ -35,6 +35,10 @@
         
         <!-- Missing alt text intentionally -->
         <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='150'%3E%3Crect width='600' height='150' fill='%230056b3'/%3E%3Ctext x='50%25' y='50%25' fill='white' dy='.3em' font-size='28' text-anchor='middle'%3EAccessibility Matters%3C/text%3E%3C/svg%3E">
+        
+        <!-- Image with bad alt text (passes axe but unhelpful) -->
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='150'%3E%3Crect width='600' height='150' fill='%23dc3545'/%3E%3Ctext x='50%25' y='50%25' fill='white' dy='.3em' font-size='28' text-anchor='middle'%3EBad Alt Text Example%3C/text%3E%3C/svg%3E" alt="blog_post_image_001.png">
+        <p><em>Image above has bad alt text: "blog_post_image_001.png" (NOT caught by axe)</em></p>
     </div>
 
     <h2>Common Testing Issues</h2>

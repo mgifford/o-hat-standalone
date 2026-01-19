@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Blog: Beyond Automated Testing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: white;
+        }
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #0056b3;
+            margin-top: 30px;
+        }
+        .article {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .good-alt {
+            border: 2px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        .bad-alt {
+            border: 2px solid #dc3545;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin: 10px 0;
+        }
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .back-link {
+            display: inline-block;
+            color: #0056b3;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+
+<div class="content">
+    <a href="../index.html" class="back-link">← Back to Home</a>
+    
+    <div class="article">
+        <h1>What Automated Testing Misses</h1>
+        <p><em>Why axe-core and Lighthouse aren't enough for true accessibility</em></p>
+    </div>
+
+    <h2>Introduction</h2>
+    <p>Automated accessibility testing tools like axe-core are invaluable for catching structural issues. However, they can only check about 30% of WCAG success criteria. This page demonstrates errors that will NOT be caught by automated tools but are critical accessibility issues.</p>
+
+    <h2>Bad Alt Text (Not Caught)</h2>
+    <p>Automated tools check if alt text EXISTS, but they cannot evaluate if it's GOOD.</p>
+
+    <div class="comparison">
+        <div class="good-alt">
+            <h3>✅ Good Alt Text</h3>
+            <p><code>alt="Woman in business attire presenting to a meeting"</code></p>
+            <!-- Good alt text - axe won't catch the difference -->
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Crect fill='%23e8f4f8' width='300' height='200'/%3E%3Ctext x='150' y='100' text-anchor='middle' dominant-baseline='middle' font-size='14' fill='%23666'%3EProfessional meeting scenario%3C/text%3E%3C/svg%3E" alt="Woman in business attire presenting to a meeting">
+            <p>Clear, descriptive alt text helps users understand the image's context and purpose.</p>
+        </div>
+
+        <div class="bad-alt">
+            <h3>❌ Bad Alt Text</h3>
+            <p><code>alt="image123.jpg"</code></p>
+            <!-- Bad alt text - axe will pass this! -->
+            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Crect fill='%23ffe8e8' width='300' height='200'/%3E%3Ctext x='150' y='100' text-anchor='middle' dominant-baseline='middle' font-size='14' fill='%23666'%3EProfessional meeting scenario%3C/text%3E%3C/svg%3E" alt="image123.jpg">
+            <p>Filename alt text is useless to screen reader users—they hear "image one two three jpg" instead of understanding the image.</p>
+        </div>
+    </div>
+
+    <h2>More Bad Alt Text Examples (All Pass Axe)</h2>
+    
+    <p>These images all have alt text, so axe-core will report them as PASSING. But they're terrible for users:</p>
+
+    <div style="background: #fff3cd; padding: 15px; border-radius: 4px; margin: 15px 0;">
+        <h3>All of these will pass axe validation:</h3>
+        
+        <h4>Example 1: Generic "Image"</h4>
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%230056b3' width='100' height='100'/%3E%3C/svg%3E" alt="Image" width="100" height="100">
+        <p><code>alt="Image"</code> — Not helpful</p>
+
+        <h4>Example 2: Filename</h4>
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23dc3545' width='100' height='100'/%3E%3C/svg%3E" alt="photo_2024_01_19_3947.jpg" width="100" height="100">
+        <p><code>alt="photo_2024_01_19_3947.jpg"</code> — Meaningless</p>
+
+        <h4>Example 3: Generic "Picture"</h4>
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%23ffc107' width='100' height='100'/%3E%3C/svg%3E" alt="Picture" width="100" height="100">
+        <p><code>alt="Picture"</code> — Too vague</p>
+
+        <h4>Example 4: Redundant "Photo"</h4>
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%2328a745' width='100' height='100'/%3E%3C/svg%3E" alt="Photo" width="100" height="100">
+        <p><code>alt="Photo"</code> — Users already know it's an image</p>
+    </div>
+
+    <h2>Semantic Misuse (Not Caught)</h2>
+    
+    <p>Axe can check that elements have valid roles, but it cannot determine if a role is APPROPRIATE to context.</p>
+
+    <div style="background: #fff3cd; padding: 15px; border-radius: 4px; margin: 15px 0;">
+        <h3>These are technically valid but semantically wrong:</h3>
+        
+        <h4>❌ Button marked as heading</h4>
+        <button role="heading" aria-level="2">Click me</button>
+        <p><code>role="heading" aria-level="2"</code> on a button — Confusing to screen reader users</p>
+
+        <h4>❌ Text in interactive role</h4>
+        <div role="button" tabindex="0">This looks like a button but doesn't work</div>
+        <p><code>role="button"</code> on plain div without keyboard handling — Only visually appears interactive</p>
+
+        <h4>❌ Inappropriate list usage</h4>
+        <ul>
+            <li>This is a navigation menu</li>
+            <li>But it's marked as a list</li>
+            <li>When it should be nav with role="navigation"</li>
+        </ul>
+        <p>Technically valid HTML, but semantically incorrect context for navigation</p>
+    </div>
+
+    <h2>Visual Relationships Not Marked Up (Not Caught)</h2>
+    
+    <p>Axe can't determine if related elements should be grouped together.</p>
+
+    <div style="background: #fff3cd; padding: 15px; border-radius: 4px; margin: 15px 0;">
+        <h3>Related form fields shown visually but not semantically:</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 15px 0; padding: 10px; border: 1px solid #ccc;">
+            <div>
+                <label for="date-month">Month</label><br>
+                <input type="text" id="date-month" placeholder="MM" style="width: 100%;">
+            </div>
+            <div>
+                <label for="date-day">Day</label><br>
+                <input type="text" id="date-day" placeholder="DD" style="width: 100%;">
+            </div>
+            <div>
+                <label for="date-year">Year</label><br>
+                <input type="text" id="date-year" placeholder="YYYY" style="width: 100%;">
+            </div>
+        </div>
+        
+        <p><strong>Issue:</strong> These fields are visually grouped as a date input, but they're marked up as three separate, unrelated fields. Axe won't catch this because each field has a label. A screen reader user won't know these fields belong together.</p>
+    </div>
+
+    <h2>Content Appropriateness (Not Caught)</h2>
+    
+    <p>Automated tools cannot determine if list content is actually appropriate for a list:</p>
+
+    <ul>
+        <li><strong>Product price:</strong> $19.99</li>
+        <li><strong>Shipping:</strong> Free</li>
+        <li><strong>Total:</strong> $19.99</li>
+    </ul>
+    
+    <p><strong>Issue:</strong> This should be a definition list or table, not an unordered list. Axe will pass because the HTML is technically valid, but it's not semantically correct for the content.</p>
+
+    <h2>Hidden Content & Keyboard Navigation (Not Caught)</h2>
+    
+    <p>While axe checks for keyboard accessibility, it cannot determine if keyboard users have adequate ways to navigate:</p>
+
+    <div style="background: #fff3cd; padding: 15px; border-radius: 4px; margin: 15px 0;">
+        <h3>Missing skip links</h3>
+        <p>This page lacks a "Skip to main content" link. Keyboard and screen reader users must tab through all navigation before reaching content. Axe won't catch this.</p>
+    </div>
+
+    <h2>Key Takeaway</h2>
+    
+    <div style="background: #e8f4f8; border-left: 4px solid #0056b3; padding: 15px; margin: 20px 0; border-radius: 4px;">
+        <h3>Automated Testing is 30% of the Solution</h3>
+        <p>Axe-core and similar tools can catch about 30% of WCAG success criteria. They check:</p>
+        <ul>
+            <li>✅ That alt attributes exist</li>
+            <li>✅ That ARIA attributes are valid</li>
+            <li>✅ That lists have correct structure</li>
+            <li>✅ That color contrast meets standards</li>
+        </ul>
+        <p>But they CANNOT check:</p>
+        <ul>
+            <li>❌ If alt text is meaningful</li>
+            <li>❌ If a role is contextually appropriate</li>
+            <li>❌ If related content is grouped correctly</li>
+            <li>❌ If content in lists belongs in lists</li>
+            <li>❌ If the page has adequate navigation aids</li>
+        </ul>
+        <p><strong>Always combine automated testing with manual testing by real users with disabilities.</strong></p>
+    </div>
+
+    <a href="../index.html" class="back-link">← Back to Home</a>
+</div>
+
+</body>
+</html>

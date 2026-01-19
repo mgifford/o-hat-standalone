@@ -73,6 +73,20 @@
         <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='100'%3E%3Crect fill='%23f57c00' width='200' height='100'/%3E%3Ctext x='50%' y='50%' text-anchor='middle' dy='.3em' fill='white' font-size='16'%3ETest Image 2%3C/text%3E%3C/svg%3E">
     </div>
 
+    <h2>Images with Meaningless Alt Text (Passes Axe)</h2>
+    <div class="image-section">
+        <p>These images have alt text, so automated tools will pass them. But the alt text is useless:</p>
+        <!-- Bad alt text that passes automated testing -->
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='100'%3E%3Crect fill='%23dc3545' width='200' height='100'/%3E%3Ctext x='50%' y='50%' text-anchor='middle' dy='.3em' fill='white' font-size='16'%3ETest Image 3%3C/text%3E%3C/svg%3E" alt="image3456.jpg">
+        <p><strong>Problem:</strong> alt="image3456.jpg" — Filename instead of description</p>
+        
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='100'%3E%3Crect fill='%23ffc107' width='200' height='100'/%3E%3Ctext x='50%' y='50%' text-anchor='middle' dy='.3em' fill='%23333' font-size='16'%3ETest Image 4%3C/text%3E%3C/svg%3E" alt="Image">
+        <p><strong>Problem:</strong> alt="Image" — Too generic and unhelpful</p>
+
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='100'%3E%3Crect fill='%2328a745' width='200' height='100'/%3E%3Ctext x='50%' y='50%' text-anchor='middle' dy='.3em' fill='white' font-size='16'%3ETest Image 5%3C/text%3E%3C/svg%3E" alt="photo_2024.jpg">
+        <p><strong>Problem:</strong> alt="photo_2024.jpg" — Another filename</p>
+    </div>
+
     <h2>Color Contrast Issues</h2>
     
     <div class="low-contrast">
@@ -90,9 +104,11 @@
 
     <h2>Summary of Issues on This Page</h2>
     <ul>
-        <li>2 images missing alt text attributes</li>
+        <li>2 images missing alt text attributes (caught by axe)</li>
+        <li>3 images with meaningless alt text: "image3456.jpg", "Image", "photo_2024.jpg" (NOT caught by axe - semantic issue)</li>
         <li>2 text blocks with poor color contrast ratios</li>
-        <li>Expected violations: image-alt, color-contrast</li>
+        <li>Expected violations: image-alt (2), color-contrast (2)</li>
+        <li>Manual testing issues: Bad alt text on 3 images</li>
     </ul>
 
 </div>

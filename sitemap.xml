@@ -28,6 +28,9 @@
       <loc>https://example.com/blog/post1.html</loc>
    </url>
    <url>
+      <loc>https://example.com/blog/post2.html</loc>
+   </url>
+   <url>
       <loc>https://example.com/auth/login.html</loc>
    </url>
 </urlset>

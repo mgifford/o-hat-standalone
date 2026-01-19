@@ -142,6 +142,16 @@
         </div>
 
         <div class="media-item">
+            <h3>SVG as Image With Meaningless Alt</h3>
+            <!-- SVG with bad alt text - passes axe but not helpful -->
+            <svg role="img" aria-label="graphic_2024.svg" width="200" height="100" xmlns="http://www.w3.org/2000/svg">
+                <rect width="200" height="100" fill="#dc3545"/>
+                <text x="50%" y="50%" fill="white" text-anchor="middle" dominant-baseline="middle">Bad Label</text>
+            </svg>
+            <p><strong>Issue:</strong> SVG aria-label="graphic_2024.svg" — Filename instead of description (NOT caught by axe)</p>
+        </div>
+
+        <div class="media-item">
             <h3>SVG as Icon Without Label</h3>
             <!-- Issue: SVG icon without accessible name -->
             <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
@@ -149,6 +159,16 @@
                 <path d="M 20 8 L 28 20 L 20 32 L 12 20 Z" fill="#0056b3"/>
             </svg>
             <p><strong>Issue:</strong> SVG icon has no title or description element</p>
+        </div>
+
+        <div class="media-item">
+            <h3>SVG With Generic Label</h3>
+            <!-- SVG with generic label - passes axe but unhelpful -->
+            <svg role="img" aria-label="Image" width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="20" cy="20" r="18" fill="none" stroke="#ffc107" stroke-width="2"/>
+                <path d="M 20 8 L 28 20 L 20 32 L 12 20 Z" fill="#ffc107"/>
+            </svg>
+            <p><strong>Issue:</strong> SVG aria-label="Image" — Too generic (NOT caught by axe - semantic issue)</p>
         </div>
     </div>
 
@@ -173,6 +193,7 @@
         <li>1 iframe without a title</li>
         <li>1 object element without alternative text</li>
         <li>2 SVG elements without accessible names</li>
+        <li>2 SVG/media elements with meaningless labels (NOT caught by axe - semantic issues)</li>
     </ul>
 
 </div>
