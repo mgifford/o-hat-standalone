@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Page 5: Media, Video & Captions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #0056b3;
+            margin-top: 30px;
+        }
+        .media-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        .media-item {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        video, audio {
+            width: 100%;
+            margin: 10px 0;
+        }
+        .issue-list {
+            background: #fff3cd;
+            border-left: 3px solid #f57c00;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .back-link {
+            display: inline-block;
+            color: #0056b3;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="index.html" class="back-link">← Back to Test Site</a>
+
+    <h1>Page 5: Media Accessibility Issues</h1>
+    
+    <p>This page tests accessibility issues related to video, audio, and embedded media elements.</p>
+
+    <div class="media-section">
+        <h2>Video Issues</h2>
+        
+        <div class="media-item">
+            <h3>Video Without Captions</h3>
+            <!-- Issue: Video element without captions (video-caption rule) -->
+            <video controls width="100%" height="300">
+                <source src="data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc2hjNW10czE=" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <p><strong>Issue:</strong> No captions or subtitle tracks provided</p>
+        </div>
+
+        <div class="media-item">
+            <h3>Video With No Track Element</h3>
+            <!-- Issue: Video tag with no caption track (no track element) -->
+            <video controls width="100%" height="300" title="Sample Video">
+                <source src="data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc2hjNW10czE=" type="video/mp4">
+            </video>
+            <p><strong>Issue:</strong> Track element missing for captions</p>
+        </div>
+    </div>
+
+    <div class="media-section">
+        <h2>Audio Issues</h2>
+        
+        <div class="media-item">
+            <h3>Audio Without Transcript</h3>
+            <!-- Issue: Audio autoplay for more than 3 seconds without control (no-autoplay-audio) -->
+            <audio controls autoplay style="width: 100%;">
+                <source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAAA=" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            <p><strong>Issue:</strong> Audio autoplays without user control</p>
+        </div>
+
+        <div class="media-item">
+            <h3>Audio With No Description</h3>
+            <audio controls style="width: 100%;">
+                <source src="data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAAA=" type="audio/wav">
+            </audio>
+            <p><strong>Issue:</strong> No transcript or description provided for audio content</p>
+        </div>
+    </div>
+
+    <div class="media-section">
+        <h2>Embedded Content Issues</h2>
+        
+        <div class="media-item">
+            <h3>Iframe Without Title</h3>
+            <!-- Issue: iframe without title (frame-title rule) -->
+            <iframe width="100%" height="315" src="about:blank"></iframe>
+            <p><strong>Issue:</strong> No title attribute on iframe</p>
+        </div>
+
+        <div class="media-item">
+            <h3>Object Element Without Alt</h3>
+            <!-- Issue: object element without alt text (object-alt rule) -->
+            <object data="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect fill='%230056b3' width='100' height='100'/%3E%3C/svg%3E" type="image/svg+xml" width="200" height="200"></object>
+            <p><strong>Issue:</strong> Object element has no alternative text</p>
+        </div>
+    </div>
+
+    <div class="media-section">
+        <h2>SVG Issues</h2>
+        
+        <div class="media-item">
+            <h3>SVG as Image Without Alt</h3>
+            <!-- Issue: SVG with role="img" but no accessible text (svg-img-alt rule) -->
+            <svg role="img" width="200" height="100" xmlns="http://www.w3.org/2000/svg">
+                <rect width="200" height="100" fill="#0056b3"/>
+                <text x="50%" y="50%" fill="white" text-anchor="middle" dominant-baseline="middle">Chart Data</text>
+            </svg>
+            <p><strong>Issue:</strong> SVG role="img" has no accessible name or description</p>
+        </div>
+
+        <div class="media-item">
+            <h3>SVG as Icon Without Label</h3>
+            <!-- Issue: SVG icon without accessible name -->
+            <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="20" cy="20" r="18" fill="none" stroke="#0056b3" stroke-width="2"/>
+                <path d="M 20 8 L 28 20 L 20 32 L 12 20 Z" fill="#0056b3"/>
+            </svg>
+            <p><strong>Issue:</strong> SVG icon has no title or description element</p>
+        </div>
+    </div>
+
+    <div class="issue-list">
+        <h3>Issues Tested on This Page:</h3>
+        <ul>
+            <li><strong>video-caption</strong> - Videos without captions</li>
+            <li><strong>audio-caption</strong> - Audio without transcripts (deprecated but tested)</li>
+            <li><strong>no-autoplay-audio</strong> - Audio/video that autoplay for more than 3 seconds</li>
+            <li><strong>frame-title</strong> - Iframes without accessible titles</li>
+            <li><strong>object-alt</strong> - Object elements without alternative text</li>
+            <li><strong>svg-img-alt</strong> - SVG images without accessible text</li>
+            <li><strong>role-img-alt</strong> - Elements with role="img" without names</li>
+        </ul>
+    </div>
+
+    <h2>Summary</h2>
+    <p>This page intentionally includes accessibility issues related to multimedia content:</p>
+    <ul>
+        <li>2 video elements without proper captions</li>
+        <li>1 autoplaying audio element</li>
+        <li>1 iframe without a title</li>
+        <li>1 object element without alternative text</li>
+        <li>2 SVG elements without accessible names</li>
+    </ul>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Page 6: Tables & Data Structure</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: white;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #0056b3;
+            margin-top: 30px;
+        }
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background: #f9f9f9;
+        }
+        .issue-badge {
+            background: #fff3cd;
+            border: 1px solid #f57c00;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-size: 13px;
+        }
+        .back-link {
+            display: inline-block;
+            color: #0056b3;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        ul { margin: 15px 0; padding-left: 20px; }
+        li { margin: 8px 0; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <a href="index.html" class="back-link">← Back to Test Site</a>
+
+    <h1>Page 6: Tables & Data Structure</h1>
+    
+    <p>This page tests accessibility issues related to data tables, lists, and semantic HTML structure.</p>
+
+    <div class="section">
+        <h2>Table Without Proper Headers</h2>
+        <div class="issue-badge">
+            <strong>Issue:</strong> Table has no th elements, only td elements. Headers not marked as headers.
+        </div>
+        <!-- Issue: Table without proper th elements (th-has-data-cells, td-headers-attr) -->
+        <table>
+            <tr>
+                <td>Product</td>
+                <td>Q1 Sales</td>
+                <td>Q2 Sales</td>
+                <td>Q3 Sales</td>
+            </tr>
+            <tr>
+                <td>Widget A</td>
+                <td>$50,000</td>
+                <td>$62,500</td>
+                <td>$75,000</td>
+            </tr>
+            <tr>
+                <td>Widget B</td>
+                <td>$30,000</td>
+                <td>$35,000</td>
+                <td>$40,000</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Table With Incorrect Header Associations</h2>
+        <div class="issue-badge">
+            <strong>Issue:</strong> Table cells reference headers that don't exist or are incorrect.
+        </div>
+        <!-- Issue: Table with incorrect headers attribute (td-headers-attr) -->
+        <table>
+            <tr>
+                <th id="col1">Month</th>
+                <th id="col2">Revenue</th>
+                <th id="col3">Expenses</th>
+            </tr>
+            <tr>
+                <td headers="col2">January</td>
+                <td headers="col1">$150,000</td>
+                <td headers="col4">$100,000</td>
+            </tr>
+            <tr>
+                <td headers="col2">February</td>
+                <td headers="col1">$160,000</td>
+                <td>$105,000</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Table With Duplicate Headers</h2>
+        <div class="issue-badge">
+            <strong>Issue:</strong> Table has a caption that duplicates the summary attribute text.
+        </div>
+        <!-- Issue: Duplicate caption and summary (table-duplicate-name) -->
+        <table summary="Sales Data Summary">
+            <caption>Sales Data Summary</caption>
+            <tr>
+                <th>Department</th>
+                <th>Budget</th>
+            </tr>
+            <tr>
+                <td>Marketing</td>
+                <td>$500,000</td>
+            </tr>
+            <tr>
+                <td>Engineering</td>
+                <td>$1,000,000</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Incomplete Data Table</h2>
+        <div class="issue-badge">
+            <strong>Issue:</strong> Large table (>3x3) without sufficient header associations.
+        </div>
+        <!-- Issue: Large table without proper headers (td-has-header - experimental) -->
+        <table>
+            <tr>
+                <th>Metric</th>
+                <th>2021</th>
+                <th>2022</th>
+                <th>2023</th>
+            </tr>
+            <tr>
+                <td>Users</td>
+                <td>10,000</td>
+                <td>25,000</td>
+                <td>50,000</td>
+            </tr>
+            <tr>
+                <td>Revenue</td>
+                <td>$1.2M</td>
+                <td>$3.5M</td>
+                <td>$7.8M</td>
+            </tr>
+            <tr>
+                <td>Growth</td>
+                <td>—</td>
+                <td>150%</td>
+                <td>100%</td>
+            </tr>
+            <tr>
+                <td>Market Share</td>
+                <td>2%</td>
+                <td>5%</td>
+                <td>12%</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Structure Issues: Definition Lists</h2>
+        <div class="issue-badge">
+            <strong>Issue:</strong> Definition list items exist outside a dl container.
+        </div>
+        <!-- Issue: dt/dd elements outside dl (dlitem, definition-list) -->
+        <dt>Term 1</dt>
+        <dd>Definition of term 1</dd>
+        <dt>Term 2</dt>
+        <dd>Definition of term 2</dd>
+    </div>
+
+    <div class="section">
+        <h2>Structure Issues: List Items</h2>
+        <div class="issue-badge">
+            <strong>Issue:</strong> li elements used outside of proper list containers.
+        </div>
+        <!-- Issue: li elements outside ul/ol (listitem) -->
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+        
+        <!-- Incorrect: li inside div instead of ul -->
+        <div>
+            <li>Should be in ul</li>
+            <li>This is semantic error</li>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Correct Examples</h2>
+        
+        <h3>Properly Structured Table</h3>
+        <table>
+            <caption>Sales Data (Correct)</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Product</th>
+                    <th scope="col">Q1</th>
+                    <th scope="col">Q2</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Widget A</th>
+                    <td>$50,000</td>
+                    <td>$62,500</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Correct Definition List</h3>
+        <dl>
+            <dt>HTML</dt>
+            <dd>HyperText Markup Language</dd>
+            <dt>CSS</dt>
+            <dd>Cascading Style Sheets</dd>
+        </dl>
+
+        <h3>Correct Lists</h3>
+        <ul>
+            <li>Unordered item 1</li>
+            <li>Unordered item 2</li>
+        </ul>
+        <ol>
+            <li>Ordered item 1</li>
+            <li>Ordered item 2</li>
+        </ol>
+    </div>
+
+    <h2>Summary of Issues</h2>
+    <ul>
+        <li><strong>th-has-data-cells</strong> - Table headers don't describe any data cells</li>
+        <li><strong>td-headers-attr</strong> - Table cells reference invalid or non-existent headers</li>
+        <li><strong>table-duplicate-name</strong> - Caption duplicates summary attribute</li>
+        <li><strong>td-has-header</strong> - Large table cells lack proper header references (experimental)</li>
+        <li><strong>definition-list</strong> - Definition list structure is incorrect</li>
+        <li><strong>dlitem</strong> - dt/dd elements outside dl container</li>
+        <li><strong>listitem</strong> - li elements outside ul/ol containers</li>
+    </ul>
+
+</div>
+
+</body>
+</html>

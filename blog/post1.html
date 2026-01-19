@@ -1,48 +1,110 @@
 <!DOCTYPE html>
-<html lang="en">
+<!-- Missing lang attribute intentionally -->
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Blog Post: Accessibility Pitfalls</title>
+    <title>Blog Post: Accessibility and Tables</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-        .hero { background: #f5f5f5; padding: 30px; border-radius: 6px; }
-        .content { max-width: 800px; margin: 0 auto; }
+        .content { max-width: 900px; margin: 0 auto; }
+        h1 { color: #333; }
+        h2 { color: #0056b3; margin-top: 30px; }
+        h4 { color: #666; font-size: 16px; }
+        .article { background: #f9f9f9; padding: 20px; border-radius: 4px; margin: 20px 0; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        td, th { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background: #f5f5f5; }
         .bad-contrast { color: #888888; background: #8a8a8a; padding: 12px; border-radius: 4px; }
         .button-row { margin: 20px 0; }
-        button { background: #0056b3; color: white; border: none; padding: 10px 16px; border-radius: 4px; cursor: pointer; }
+        button { background: #0056b3; color: white; border: none; padding: 10px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; }
         .icon-btn { width: 40px; height: 40px; font-size: 20px; padding: 8px; }
+        aside { background: #f0f0f0; padding: 15px; margin: 20px 0; border-radius: 4px; }
+        .related { background: #e8f4f8; border-left: 4px solid #0056b3; padding: 15px; margin: 20px 0; }
+        .back-link { display: inline-block; color: #0056b3; text-decoration: none; margin-top: 20px; }
     </style>
 </head>
 <body>
+
 <div class="content">
-    <a href="../index.html">← Back to Test Site</a>
-    <div class="hero">
-        <h1>Blog Post: Accessibility Pitfalls</h1>
-        <!-- Issue: Missing alt on decorative image -->
-        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='200'%3E%3Crect width='600' height='200' fill='%230056b3'/%3E%3Ctext x='50%' y='50%' fill='white' dy='.3em' font-size='32' text-anchor='middle'%3EHero%20Graphic%3C/text%3E%3C/svg%3E">
-        <p class="bad-contrast">This intro text has low contrast to mimic a real-world blog styling issue.</p>
+    <a href="../index.html" class="back-link">← Back to Home</a>
+    
+    <div class="article">
+        <h2>Understanding Accessibility Testing</h2>
+        <p class="bad-contrast">Low contrast: This text is hard to read due to poor color contrast between foreground and background.</p>
+        
+        <!-- Missing alt text intentionally -->
+        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='150'%3E%3Crect width='600' height='150' fill='%230056b3'/%3E%3Ctext x='50%25' y='50%25' fill='white' dy='.3em' font-size='28' text-anchor='middle'%3EAccessibility Matters%3C/text%3E%3C/svg%3E">
     </div>
 
-    <h2>Skipped Heading Level</h2>
-    <!-- Issue: Heading jumps from h2 to h4 -->
-    <h4>Deep Dive Without Proper Structure</h4>
-    <p>We intentionally skipped h3 here. Screen readers may misinterpret document structure.</p>
+    <h2>Common Testing Issues</h2>
+    <!-- Intentional: Skipped heading level (h2 to h4) -->
+    <h4>Why Heading Order Matters</h4>
+    <p>Screen reader users rely on proper heading structure to navigate content. Skipping levels (h1 → h3) causes confusion.</p>
 
+    <h2>Issue Categories</h2>
+    
+    <!-- Table without proper header associations - intentional -->
+    <table>
+        <tr>
+            <th></th>
+            <th>Impact Level</th>
+            <th>Detection Tool</th>
+        </tr>
+        <tr>
+            <td>Missing form labels</td>
+            <td>Critical</td>
+            <td>Automated</td>
+        </tr>
+        <tr>
+            <td>Weak color contrast</td>
+            <td>Serious</td>
+            <td>Automated</td>
+        </tr>
+        <tr>
+            <td>No alt text</td>
+            <td>Critical</td>
+            <td>Automated</td>
+        </tr>
+        <tr>
+            <td>Keyboard navigation</td>
+            <td>Critical</td>
+            <td>Manual</td>
+        </tr>
+    </table>
+
+    <h2>Navigation Test</h2>
+    <!-- Intentional: Icon buttons without labels -->
     <div class="button-row">
-        <!-- Issue: Icon-only buttons without labels -->
         <button class="icon-btn">👍</button>
         <button class="icon-btn">📤</button>
         <button class="icon-btn">🗑️</button>
+        <button class="icon-btn">💬</button>
     </div>
 
-    <h2>Summary of Issues</h2>
-    <ul>
-        <li>Missing alt text on hero image</li>
-        <li>Low contrast text block</li>
-        <li>Skipped heading level (h2 to h4)</li>
-        <li>Icon-only buttons without accessible names</li>
-    </ul>
+    <!-- Intentional: List items outside list container -->
+    <h2>Best Practices</h2>
+    <li>Always use semantic HTML</li>
+    <li>Test with real assistive technology</li>
+    <li>Combine automated and manual testing</li>
+
+    <!-- Missing main landmark intentionally -->
+    <aside>
+        <h3>Related Resources</h3>
+        <ul>
+            <li><a href="#">WCAG 2.1 Guidelines</a></li>
+            <li><a href="#">Accessibility Fundamentals</a></li>
+            <li><a href="#">Testing Methods</a></li>
+        </ul>
+    </aside>
+
+    <div class="related">
+        <h3>Further Reading</h3>
+        <p>For more information on accessibility standards, visit the <a href="../index.html">main documentation</a>.</p>
+    </div>
+
+    <a href="../index.html" class="back-link">← Back to Home</a>
 </div>
+
 </body>
 </html>

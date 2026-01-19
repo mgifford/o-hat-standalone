@@ -2,36 +2,184 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Login Page with Issues</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1">
+    <title>Login Page - Form Testing</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #fafafa; }
-        .card { max-width: 400px; margin: 40px auto; background: white; border: 1px solid #ddd; border-radius: 6px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-        h1 { margin-top: 0; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
-        button { width: 100%; padding: 12px; background: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background: #fafafa; 
+        }
+        .card { 
+            max-width: 400px; 
+            margin: 40px auto; 
+            background: white; 
+            border: 1px solid #ddd; 
+            border-radius: 6px; 
+            padding: 24px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
+        }
+        h1 { margin-top: 0; color: #333; }
+        h2 { color: #0056b3; font-size: 18px; margin-top: 25px; }
+        .form-group { 
+            margin-bottom: 18px; 
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"],
+        select {
+            width: 100%; 
+            padding: 10px; 
+            margin: 8px 0; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        input[type="checkbox"],
+        input[type="radio"] {
+            margin-right: 8px;
+        }
+        .checkbox-group,
+        .radio-group {
+            margin: 15px 0;
+        }
+        .checkbox-item,
+        .radio-item {
+            margin: 10px 0;
+        }
+        button { 
+            width: 100%; 
+            padding: 12px; 
+            background: #0056b3; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
         button:hover { background: #004085; }
-        .note { font-size: 12px; color: #666; }
+        .note { 
+            font-size: 12px; 
+            color: #666; 
+            background: #fffacd;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 15px 0;
+        }
+        .back-link {
+            display: inline-block;
+            color: #0056b3;
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .hint {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
     </style>
 </head>
 <body>
+
 <div class="card">
-    <a href="../index.html">← Back to Test Site</a>
-    <h1>Login</h1>
-    <p class="note">Intentional accessibility issues for testing filters (exclude "login" to skip this page).</p>
+    <a href="../index.html" class="back-link">← Back to Home</a>
+    
+    <h1>User Login</h1>
+    <p class="note">⚠️ Intentional form accessibility issues for testing purposes.</p>
 
-    <!-- Issue: Inputs missing labels -->
-    <input type="text" placeholder="Username">
-    <input type="password" placeholder="Password">
+    <form>
+        <h2>Login Credentials</h2>
+        
+        <!-- Issue: Input without associated label -->
+        <div class="form-group">
+            <input type="text" id="user" placeholder="Username">
+        </div>
 
-    <!-- Issue: Checkbox without label -->
-    <div>
-        <input type="checkbox" id="remember">
-        <!-- Missing label for checkbox -->
+        <!-- Issue: Input with label but incorrect association -->
+        <div class="form-group">
+            <label for="pwd">Password</label>
+            <input type="password" id="password" placeholder="Enter password">
+        </div>
+
+        <!-- Issue: Input without autocomplete guidance -->
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email">
+        </div>
+
+        <h2>Account Options</h2>
+
+        <!-- Issue: Checkbox without label -->
+        <div class="checkbox-group">
+            <div class="checkbox-item">
+                <input type="checkbox" id="remember" name="remember">
+                <!-- Missing label element -->
+                <span>Remember me on this device</span>
+            </div>
+        </div>
+
+        <!-- Issue: Radio buttons without proper fieldset/legend -->
+        <div class="radio-group">
+            <h3>Account Type</h3>
+            <div class="radio-item">
+                <input type="radio" id="type-user" name="account-type" value="user">
+                <!-- Missing associated label -->
+                <span>Personal Account</span>
+            </div>
+            <div class="radio-item">
+                <input type="radio" id="type-org" name="account-type" value="org">
+                <!-- Missing associated label -->
+                <span>Organization Account</span>
+            </div>
+        </div>
+
+        <h2>Security</h2>
+
+        <!-- Issue: Select without label -->
+        <div class="form-group">
+            <select id="security">
+                <option>Choose security question...</option>
+                <option>What is your pet's name?</option>
+                <option>What city were you born in?</option>
+            </select>
+        </div>
+
+        <!-- Issue: Input with hint but no associated label -->
+        <div class="form-group">
+            <input type="text" id="answer" placeholder="Your answer" aria-describedby="hint">
+            <div class="hint" id="hint">Enter your security answer</div>
+        </div>
+
+        <!-- Issue: Vague button text -->
+        <button type="submit">OK</button>
+
+        <!-- Issue: Cancel button uses tabindex > 0 -->
+        <button type="reset" style="background: #6c757d; margin-top: 10px;" tabindex="2">Clear</button>
+    </form>
+
+    <!-- Issues: Multiple labels on one input -->
+    <div style="margin-top: 20px; padding: 10px; background: #f0f0f0; border-radius: 4px; font-size: 12px;">
+        <p><strong>Issues on this page:</strong></p>
+        <ul>
+            <li>Username input has no associated label</li>
+            <li>Password label "for" value doesn't match input id</li>
+            <li>Email input has no autocomplete attribute</li>
+            <li>Checkbox has no &lt;label&gt; element</li>
+            <li>Radio buttons have no fieldset/legend</li>
+            <li>Select has no label</li>
+            <li>Button text is vague ("OK" instead of "Sign In")</li>
+            <li>Reset button uses tabindex > 0</li>
+            <li>Meta viewport disables user zoom</li>
+        </ul>
     </div>
-
-    <!-- Issue: Button with vague text -->
-    <button>Go</button>
 </div>
+
 </body>
 </html>
