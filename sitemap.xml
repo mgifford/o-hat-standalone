@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
    <url>
-      <loc>https://example.com/index.html</loc>
+      <loc>https://mgifford.github.io/o-hat-standalone/index.html</loc>
    </url>
    <url>
-      <loc>https://example.com/demo-bad.html</loc>
+      <loc>https://mgifford.github.io/o-hat-standalone/demo-bad.html</loc>
    </url>
    <url>
-      <loc>https://example.com/page1.html</loc>
+      <loc>https://mgifford.github.io/o-hat-standalone/page1.html</loc>
    </url>
    <url>
-      <loc>https://example.com/page2.html</loc>
+      <loc>https://mgifford.github.io/o-hat-standalone/page2.html</loc>
    </url>
    <url>
-      <loc>https://example.com/page3.html</loc>
+      <loc>https://mgifford.github.io/o-hat-standalone/page3.html</loc>
    </url>
    <url>
-      <loc>https://example.com/page4.html</loc>
+      <loc>https://mgifford.github.io/o-hat-standalone/page4.html</loc>
    </url>
    <url>
-      <loc>https://example.com/page5.html</loc>
+      <loc>https://mgifford.github.io/o-hat-standalone/page5.html</loc>
    </url>
    <url>
-      <loc>https://example.com/page6.html</loc>
+      <loc>https://mgifford.github.io/o-hat-standalone/page6.html</loc>
    </url>
    <url>
-      <loc>https://example.com/blog/post1.html</loc>
+      <loc>https://mgifford.github.io/o-hat-standalone/blog/post1.html</loc>
    </url>
    <url>
-      <loc>https://example.com/blog/post2.html</loc>
+      <loc>https://mgifford.github.io/o-hat-standalone/blog/post2.html</loc>
    </url>
    <url>
-      <loc>https://example.com/auth/login.html</loc>
+      <loc>https://mgifford.github.io/o-hat-standalone/auth/login.html</loc>
    </url>
 </urlset>
