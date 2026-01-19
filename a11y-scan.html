@@ -93,15 +93,37 @@
         .count-badge.high { background: #ffebee; color: #c62828; }
 
         .scan-footer { margin-top: 50px; border-top: 1px solid #eee; padding-top: 20px; color: #666; font-size: 14px; }
+        
+        /* Additional utility classes to avoid inline styles */
+        .text-center { text-align: center; }
+        .text-muted { font-size: 14px; color: #666; }
+        .btn-group { margin-top: 10px; }
+        .progress-fieldset { border: 1px solid #ccc; padding: 12px; margin-bottom: 12px; }
+        .report-header { margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+        .report-header-flex { display: flex; justify-content: space-between; align-items: flex-start; }
+        .report-title { margin-top: 0; }
+        .report-meta { color: #666; margin: 5px 0; }
+        .report-meta strong { font-weight: bold; }
+        .btn-link { text-decoration: none; padding: 8px 16px; }
+        .page-table-wrapper { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; margin-bottom: 30px; }
+        .no-pages { padding: 15px; }
+        .issue-help { font-weight: normal; margin-left: 10px; color: #555; }
+        .impact-badge { margin-left: 8px; }
+        .issue-description { margin-top: 0; }
+        .node-item { margin-bottom: 15px; }
+        .node-details { margin-left: 15px; border-left: 2px solid #ddd; padding-left: 10px; margin-top: 5px; background: #fafafa; padding: 8px; }
+        .node-target { font-size: 12px; color: #555; margin-bottom: 4px; }
+        .node-html { margin: 0; font-size: 11px; white-space: pre-wrap; }
+        .node-failure { color: #d32f2f; font-size: 12px; margin-top: 4px; }
     </style>
 </head>
 <body>
 
 <div id="gate-screen">
-    <div style="text-align:center;">
+    <div class="text-center">
         <h2>Access Denied</h2>
         <p>Please provide a valid token parameter.</p>
-        <p style="font-size: 14px; color: #666;">Example: ?token=A11Y-SECRET</p>
+        <p class="text-muted">Example: ?token=A11Y-SECRET</p>
     </div>
 </div>
 
@@ -190,7 +212,7 @@
             </div>
         </div>
 
-        <div style="margin-top: 10px;">
+        <div class="btn-group">
             <button id="startBtn">Start Scan</button>
             <button id="stopBtn" class="stop" disabled>Stop</button>
             <button id="exportBtn" disabled>Export JSON</button>
@@ -199,7 +221,7 @@
         </div>
     </div>
 
-    <fieldset style="border: 1px solid #ccc; padding: 12px; margin-bottom: 12px;">
+    <fieldset class="progress-fieldset">
         <legend>Progress</legend>
         <div class="progress-stats">
             <div class="stat">Loaded URLs: <span id="loadedCount" class="stat-value">0</span></div>
@@ -447,7 +469,7 @@
     function renderResults(resultsByUrl) {
         const entries = Object.entries(resultsByUrl);
         if (!entries.length) {
-            els.results.innerHTML = '<p style="text-align:center;color:#666;">No results yet.</p>';
+            els.results.innerHTML = '<p class="text-center text-muted">No results yet.</p>';
             return;
         }
 
@@ -484,16 +506,16 @@
         
         // 2. Generate HTML
         let html = `
-            <div style="margin-bottom: 30px; border-bottom: 2px solid #eee; padding-bottom: 20px;">
-                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div class="report-header">
+                <div class="report-header-flex">
                    <div>
-                       <h2 style="margin-top:0;">Accessibility Scan Report</h2>
-                       <p style="color:#666; margin:5px 0;">
-                           Date: ${new Date().toLocaleString()} · <span style="font-weight:bold;">${totalPages} Pages Scanned</span>
+                       <h2 class="report-title">Accessibility Scan Report</h2>
+                       <p class="report-meta">
+                           Date: ${new Date().toLocaleString()} · <strong>${totalPages} Pages Scanned</strong>
                        </p>
                    </div>
                    <div>
-                       <a href="#" onclick="exportCsv(); return false;" class="pill scanning" style="text-decoration:none; padding:8px 16px;">Download CSV</a>
+                       <a href="#" onclick="exportCsv(); return false;" class="pill scanning btn-link">Download CSV</a>
                    </div>
                 </div>
             </div>
@@ -522,7 +544,7 @@
             </div>
 
             <h2 class="section-title">Top pages to review</h2>
-            <div style="border:1px solid #ddd; border-radius:8px; overflow:hidden; margin-bottom: 30px;">
+            <div class="page-table-wrapper">
                 ${renderTopPages(entries)}
             </div>
 
@@ -549,7 +571,7 @@
             return { url, count };
         }).sort((a,b) => b.count - a.count).slice(0, 5); // Start with top 5
 
-        if (sorted.length === 0) return '<div style="padding:15px;">No pages scanned yet.</div>';
+        if (sorted.length === 0) return '<div class="no-pages">No pages scanned yet.</div>';
 
         return sorted.map(p => `
             <div class="top-page-row">
@@ -595,26 +617,26 @@
                 <summary class="issue-header">
                     <div>
                         <span class="issue-title">${esc(issue.id)}</span>
-                        <span style="font-weight:normal; margin-left: 10px; color:#555;">${esc(issue.help)}</span>
+                        <span class="issue-help">${esc(issue.help)}</span>
                     </div>
                     <div class="issue-meta">
                         ${issue.nodes.length} instances · ${issue.pages.size} pages
-                        <span class="pill ${['critical','serious'].includes(issue.impact) ? 'error' : 'scanning'}" style="margin-left:8px;">${issue.impact}</span>
+                        <span class="pill ${['critical','serious'].includes(issue.impact) ? 'error' : 'scanning'} impact-badge">${issue.impact}</span>
                     </div>
                 </summary>
                 <div class="issue-body">
-                    <p style="margin-top:0;">
+                    <p class="issue-description">
                         ${esc(issue.description)} 
                         ${issue.helpUrl ? `<a href="${issue.helpUrl}" target="_blank" rel="noopener">Learn more</a>` : ''}
                     </p>
                     ${Object.entries(nodesByUrl).map(([url, nodes]) => `
-                        <div style="margin-bottom: 15px;">
+                        <div class="node-item">
                             <strong><a href="${url}" target="_blank">${url}</a></strong> (${nodes.length} nodes)
                             ${nodes.map(n => `
-                                <div style="margin-left: 15px; border-left: 2px solid #ddd; padding-left: 10px; margin-top:5px; background:#fafafa; padding:8px;">
-                                    <div class="mono" style="font-size:12px; color:#555; margin-bottom:4px;">Target: ${esc(n.target && n.target.join(' '))}</div>
-                                    ${n.html ? `<pre style="margin:0; font-size:11px; white-space:pre-wrap;">${esc(n.html)}</pre>` : ''}
-                                    <div style="color:#d32f2f; font-size:12px; margin-top:4px;">${esc(n.failureSummary)}</div>
+                                <div class="node-details">
+                                    <div class="mono node-target">Target: ${esc(n.target && n.target.join(' '))}</div>
+                                    ${n.html ? `<pre class="node-html">${esc(n.html)}</pre>` : ''}
+                                    <div class="node-failure">${esc(n.failureSummary)}</div>
                                 </div>
                             `).join('')}
                         </div>
