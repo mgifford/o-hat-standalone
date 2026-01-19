@@ -1,0 +1,32 @@
+{
+  "name": "o-hat-standalone",
+  "version": "1.0.0",
+  "description": "Standalone accessibility scanner component",
+  "private": true,
+  "scripts": {
+    "test": "npm run test:html && npm run test:fixtures",
+    "test:html": "htmlhint a11y-scan.html",
+    "test:fixtures": "node .github/scripts/verify-fixtures.js",
+    "test:inline-styles": "! grep -n 'style=\"' a11y-scan.html || (echo 'Inline styles found in a11y-scan.html' && exit 1)",
+    "lint": "npm run test:html && npm run test:inline-styles"
+  },
+  "devDependencies": {
+    "@axe-core/cli": "^4.8.0",
+    "htmlhint": "^1.1.4",
+    "stylelint": "^16.1.0",
+    "stylelint-config-standard": "^36.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mgifford/o-hat-standalone"
+  },
+  "keywords": [
+    "accessibility",
+    "a11y",
+    "scanner",
+    "axe-core",
+    "wcag"
+  ],
+  "author": "Mike Gifford",
+  "license": "AGPL-3.0"
+}

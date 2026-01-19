@@ -1,0 +1,101 @@
+name: Quality Assurance
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  validate-scanner:
+    name: Validate a11y-scan.html
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install dependencies
+        run: npm install --save-dev htmlhint stylelint stylelint-config-standard
+      
+      - name: Validate HTML (a11y-scan.html only)
+        run: npx htmlhint a11y-scan.html
+      
+      - name: Check for inline styles
+        run: |
+          echo "Checking a11y-scan.html for inline styles..."
+          if grep -n 'style="' a11y-scan.html; then
+            echo "❌ ERROR: Inline styles found in a11y-scan.html"
+            echo "Please move inline styles to the <style> section or CSS classes"
+            exit 1
+          else
+            echo "✅ No inline styles found"
+          fi
+      
+      - name: Validate CSS quality
+        run: |
+          echo "Extracting CSS from a11y-scan.html for validation..."
+          # Extract CSS between <style> tags
+          sed -n '/<style>/,/<\/style>/p' a11y-scan.html > /tmp/extracted.css
+          # Basic check for CSS quality (can be expanded)
+          if [ -s /tmp/extracted.css ]; then
+            echo "✅ CSS extracted successfully"
+          else
+            echo "⚠️ No CSS found"
+          fi
+
+  validate-fixtures:
+    name: Validate Test Fixtures Have Errors
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install axe-core CLI
+        run: npm install --save-dev @axe-core/cli
+      
+      - name: Verify test fixtures contain violations
+        run: |
+          echo "Verifying that test fixture pages have accessibility violations..."
+          node .github/scripts/verify-fixtures.js
+
+  lint-config-files:
+    name: Lint Configuration Files
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Validate sitemap.xml
+        run: |
+          echo "Validating sitemap.xml structure..."
+          # Check if sitemap is valid XML
+          if xmllint --noout sitemap.xml 2>/dev/null; then
+            echo "✅ sitemap.xml is valid XML"
+          else
+            echo "❌ sitemap.xml is invalid"
+            exit 1
+          fi
+      
+      - name: Validate AGENTS.md exists
+        run: |
+          if [ -f "AGENTS.md" ]; then
+            echo "✅ AGENTS.md exists"
+            if grep -q "MUST remain broken" AGENTS.md; then
+              echo "✅ AGENTS.md contains fixture warnings"
+            else
+              echo "⚠️ AGENTS.md should warn about test fixtures"
+            fi
+          else
+            echo "❌ AGENTS.md missing"
+            exit 1
+          fi
