@@ -9,7 +9,7 @@ This repository contains the **standalone component** of the [O-Hat Scanner](htt
 The **Standalone Scanner** (`a11y-scan.html`) allows you to:
 - **Scan Local Directories:** Drag and drop a folder of HTML files directly into the browser to scan them instantly. Perfect for testing static site builds locally.
 - **Scan Live Sites:** Scan a live website same-origin via `sitemap.xml` or a custom list of URLs.
-- **No Server Required:** Runs entirely in the browser using **axe-core v4.7.0**.
+- **No Server Required:** Runs entirely in the browser using **axe-core v4.11.0**.
 - **Export Results:** 
   - **CSV Export:** Oobee-compatible schema (14 columns).
   - **JSON Export:** Full raw data from axe-core.
@@ -19,7 +19,7 @@ The **Standalone Scanner** (`a11y-scan.html`) allows you to:
 
 ### Prerequisites
 
-This scanner requires **axe-core v4.7.0** (included in `assets/axe.min.js`).
+This scanner requires **axe-core v4.11.0** (included in `assets/axe.min.js`).
 
 ### Quick Start (Local Testing)
 
@@ -73,11 +73,11 @@ This scanner requires **axe-core v4.7.0** (included in `assets/axe.min.js`).
    **Option B: Use a CDN**
    - Open the scanner UI
    - Update the **Axe Script Path** field to:  
-     `https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.7.0/axe.min.js`
+     `https://cdn.jsdelivr.net/npm/axe-core@4.11.0/axe.min.js`
    
    **Option C: Install via npm**
    ```bash
-   npm install axe-core@4.7.0
+   npm install axe-core@4.11.0
    cp node_modules/axe-core/axe.min.js assets/
    ```
 
@@ -162,11 +162,12 @@ See [.github/workflows/README.md](.github/workflows/README.md) for details.
 
 ### Axe-Core Version
 
-This project uses **axe-core v4.7.0** (released 2023) for accessibility testing.
+This project uses **axe-core v4.11.0** (latest, released 2025) for accessibility testing.
 
 - **Location:** `assets/axe.min.js`
 - **License:** Mozilla Public License 2.0
-- **Documentation:** https://www.deque.com/axe/core-documentation/
+- **Rules Documentation:** https://dequeuniversity.com/rules/axe/html/4.11
+- **Core Documentation:** https://www.deque.com/axe/core-documentation/
 - **GitHub:** https://github.com/dequelabs/axe-core
 
 ### Browser Compatibility
@@ -181,7 +182,7 @@ This project uses **axe-core v4.7.0** (released 2023) for accessibility testing.
 | File | Purpose | Required |
 |------|---------|----------|
 | `a11y-scan.html` | Main scanner application | ✅ Yes |
-| `assets/axe.min.js` | Axe-core accessibility engine (v4.7.0) | ✅ Yes |
+| `assets/axe.min.js` | Axe-core accessibility engine (v4.11.0) | ✅ Yes |
 | `sitemap.xml` | For sitemap-based scanning | Optional |
 
 **Note:** Both `a11y-scan.html` and `index.html` reference `assets/axe.min.js`. Ensure this file is present for local testing.
