@@ -187,6 +187,30 @@ This project uses **axe-core v4.11.0** (latest, released 2025) for accessibility
 
 **Note:** Both `a11y-scan.html` and `index.html` reference `assets/axe.min.js`. Ensure this file is present for local testing.
 
+## 🔗 Related Projects
+
+> **[mgifford/o-hat-scanner](https://github.com/mgifford/o-hat-scanner)** — the full CI-powered scanner built on Playwright + Axe, with scheduled runs, multi-mode discovery, and GitHub Pages reports.
+
+> **[mgifford/open-scans](https://github.com/mgifford/open-scans)** — issue-driven accessibility scanning via a public GitHub Pages form, supporting multi-engine comparisons (axe-core, ALFA, IBM Equal Access, AccessLint, QualWeb) in a single run.
+
+**Use open-scans instead if you:**
+
+- Want to scan a batch of URLs without forking or configuring a repo.
+- Need **multi-engine comparisons** in a single run.
+- Prefer a simple submit-URL-and-wait workflow rather than managing configuration files and cron schedules.
+
+**Use o-hat-scanner instead if you:**
+
+- Need **scheduled, automated scanning** of your own sites on a recurring basis.
+- Want full control over the scanning pipeline (modes, concurrency, discovery queries, viewport/color-scheme variants).
+- Are integrating accessibility scanning into your own CI/CD workflow.
+
+**Use o-hat-standalone (this repo) if you:**
+
+- Need a **zero-dependency, single-file scanner** that runs entirely in the browser.
+- Want to test a local static build by dragging a folder onto the page.
+- Are deploying the scanner alongside your own site for same-origin live scanning.
+
 ## License
 
 AGPL-3.0 - See LICENSE for details.
