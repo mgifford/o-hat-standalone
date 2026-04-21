@@ -11,7 +11,7 @@ The **Standalone Scanner** (`a11y-scan.html`) allows you to:
 - **Scan Live Sites:** Scan a live website same-origin via `sitemap.xml` or a custom list of URLs.
 - **No Server Required:** Runs entirely in the browser using **axe-core v4.11.0**.
 - **Export Results:** 
-  - **CSV Export:** Oobee-compatible schema (14 columns).
+  - **CSV Export:** [Oobee](https://github.com/GovTechSG/oobee)-compatible schema (14 columns).
   - **JSON Export:** Full raw data from axe-core.
 - **Interactive UI:** Real-time progress tracking, rule summaries, and detailed violation reports.
 
